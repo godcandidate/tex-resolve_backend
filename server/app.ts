@@ -23,7 +23,7 @@ app.use(cors({
 //testing api
 app.use('/test', (req: Request, res:Response) => {
   res.status(200).json({
-    sucess: true,
+    success: true,
     message: "API is working"
   });
 }); 
