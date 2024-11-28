@@ -1,0 +1,35 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: circleci/node:22  # Use a Node.js Docker image
+    working_directory: ~/repo  # The directory where your repo will be checked out
+
+    steps:
+      # Step 1: Obtain the repo from GitHub
+      - checkout
+
+      # Step 2: Install dependencies
+      - run:
+          name: Install dependencies
+          command: |
+            npm install  # Install the npm dependencies defined in package.json
+
+      # Step 3: Run ESLint (linter)
+      - run:
+          name: Run ESLint
+          command: |
+            npm run lint  # Run the linting script to check for code issues
+
+      # Step 4: Run tests
+      - run:
+          name: Run Jest tests
+          command: |
+            npm test  # Run the tests using Jest
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
