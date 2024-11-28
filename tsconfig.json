@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+      "target": "es6",
+      "module": "node16", // Use the `node16` module system (TypeScript 4.7+)
+     // "outDir": "build",
+      //"rootDir": "src",
+      "strict": true,
+      "esModuleInterop": true
+    }
+  }
