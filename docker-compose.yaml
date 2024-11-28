@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  server:
+    build: ./server
+    container_name: tex_resolve_c
+    ports:
+      - '4000:4000'
+    volumes:
+      - ./server:/app  # Mount your project directory
+      - /app/node_modules  # Anonymous volume for node_modules
+    stdin_open: true
+    tty: true
+    
+    
