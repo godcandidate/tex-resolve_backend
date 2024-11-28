@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: circleci/node:22  # Use a Node.js Docker image
+      - image: cimg/node:22.11.0  # Use a Node.js Docker image
     working_directory: ~/repo  # The directory where your repo will be checked out
 
     steps:
