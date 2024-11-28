@@ -4,7 +4,7 @@ jobs:
   build:
     docker:
       - image: cimg/node:22.11.0  # Use a Node.js Docker image
-    working_directory: ~/repo  # The directory where your repo will be checked out
+    working_directory: ~/repo/server  # The directory where your repo will be checked out
 
     steps:
       # Step 1: Obtain the repo from GitHub
