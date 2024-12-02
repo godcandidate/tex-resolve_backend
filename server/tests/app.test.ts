@@ -3,6 +3,18 @@ import request from 'supertest';
 import { app } from '../app'; 
 import { closeRedisConnection } from '../utils/redis';
 
+jest.mock('ioredis', () => {
+  return {
+      Redis: jest.fn(() => ({
+          status: 'ready',
+          quit: jest.fn().mockResolvedValue('OK'),
+          pipeline: jest.fn(() => ({
+              exec: jest.fn().mockResolvedValue([]),
+          })),
+      })),
+  };
+});
+
 describe('Test API Endpoints', () => {
   it('should respond with 200 and success message for /test route', async () => {
     const response = await request(app).get('/test');
