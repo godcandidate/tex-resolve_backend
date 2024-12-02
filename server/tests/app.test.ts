@@ -1,6 +1,7 @@
 // tests/app.test.ts
 import request from 'supertest';
-import { app } from '../app';  // Assuming app.ts is in the root directory
+import { app } from '../app'; 
+import { closeRedisConnection } from '../utils/redis';
 
 describe('Test API Endpoints', () => {
   it('should respond with 200 and success message for /test route', async () => {
@@ -14,4 +15,10 @@ describe('Test API Endpoints', () => {
     const response = await request(app).get('/nonexistent');
     expect(response.status).toBe(404);
   });
+});
+
+
+
+afterAll(async () => {
+    await closeRedisConnection();
 });
