@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import userModel, { IUser } from "../models/user.model";
 import ErrorHandler from "../utils/ErrorHandler";
 import { CatchAsyncError } from "../middlewares/catchAsyncError";
-import jwt, { Secret } from "jsonwebtoken";
+import jwt, { Secret, JwtPayload } from "jsonwebtoken";
 
 import ejs from "ejs";
 import path from "path";
@@ -10,7 +10,7 @@ import sendMail from "../utils/sendEmail";
 import { redis } from "../utils/redis";
 
 import "dotenv/config";
-import { sendToken } from "../utils/jwt";
+import { accessTokenOptions, refreshTokenOptions, sendToken } from "../utils/jwt";
 
 
 //using interface for req.user
@@ -201,5 +201,61 @@ export const logoutUser = CatchAsyncError(
     }
   }
 );
+
+// update access token
+export const updateAccessToken = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const refresh_token = req.cookies.refresh_token as string;
+
+      //Verify refresh token
+      const decoded = jwt.verify(
+        refresh_token,
+        process.env.REFRESH_TOKEN as string
+      ) as JwtPayload;
+      if (!decoded) {
+        return next(new ErrorHandler("Could not refresh access token", 400));
+      }
+
+      //Get user id
+      const session = await redis.get(decoded.id);
+      if (!session) {
+        return next(new ErrorHandler("Could not refresh access token", 400));
+      }
+
+      const user = JSON.parse(session);
+
+      //create access and refresh token
+      const accessToken = jwt.sign(
+        { id: user._id },
+        process.env.ACCESS_TOKEN as string,
+        {
+          expiresIn: "5m",
+        }
+      );
+
+      const refreshToken = jwt.sign(
+        { id: user._id },
+        process.env.REFRESH_TOKEN as string,
+        {
+          expiresIn: "3d",
+        }
+      );
+
+      req.user = user;
+
+      res.cookie("access_token", accessToken, accessTokenOptions);
+      res.cookie("refresh_token", refreshToken, refreshTokenOptions);
+
+      res.status(200).json({
+        success: true,
+        accessToken,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
+
 
 
