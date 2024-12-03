@@ -1,52 +1,36 @@
 version: 2.1
 
 jobs:
-  # Job 1: Build
   build:
     docker:
       - image: cimg/node:22.11.0  # Use a Node.js Docker image
     working_directory: ~/repo  # Set the working directory to the root where your 'repo' is checked out
 
     steps:
-      - checkout  # Pulls your repository into ~/repo
+      # Step 1: Obtain the repo from GitHub
+      - checkout  # This step pulls your repository into ~/repo
+
+      # Step 2: Ensure we are in the correct directory
       - run:
           name: List directory contents
           command: |
             ls -l ~/repo  # Ensure CircleCI checks out to ~/repo and lists files
+
+      # Step 3: Install dependencies inside 'server' directory
       - run:
           name: Install dependencies
           command: |
             cd ~/repo/server  # Navigate into the 'server' directory
             npm install  # Install npm dependencies from package.json inside server
-      - persist_to_workspace:
-          root: ~/repo  # Persist the entire repo to workspace
-          paths:
-            - server/node_modules  # Persist the node_modules directory for reuse in subsequent jobs
 
-  # Job 2: Linter (ESLint)
-  linter:
-    docker:
-      - image: cimg/node:22.11.0  # Use a Node.js Docker image
-    working_directory: ~/repo  # Set the working directory to the root where your 'repo' is checked out
-
-    steps:
-      - attach_workspace:
-          at: ~/repo  # Attach the persisted workspace (repo and node_modules)
+      # Step 4: Run ESLint (linter)
       - run:
           name: Run ESLint
           command: |
             cd ~/repo/server  # Navigate into the 'server' directory
             npm run lint  # Run the linting script to check for code issues
 
-  # Job 3: Jest Test
-  jest_test:
-    docker:
-      - image: cimg/node:22.11.0  # Use a Node.js Docker image
-    working_directory: ~/repo  # Set the working directory to the root where your 'repo' is checked out
-
-    steps:
-      - attach_workspace:
-          at: ~/repo  # Attach the persisted workspace (repo and node_modules)
+      # Step 5: Run Jest tests
       - run:
           name: Run Jest tests
           command: |
@@ -57,10 +41,4 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - build  # First, run the build job
-      - linter:  # Second, run the linter job
-          requires:
-            - build  # Ensure the build job completes first
-      - jest_test:  # Third, run the Jest tests
-          requires:
-            - build  # Ensure the build job completes first
+      - build
