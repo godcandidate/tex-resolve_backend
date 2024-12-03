@@ -10,8 +10,11 @@ import sendMail from "../utils/sendEmail";
 import { redis } from "../utils/redis";
 
 import "dotenv/config";
-import { accessTokenOptions, refreshTokenOptions, sendToken } from "../utils/jwt";
-
+import {
+  accessTokenOptions,
+  refreshTokenOptions,
+  sendToken,
+} from "../utils/jwt";
 
 //using interface for req.user
 declare module "express" {
@@ -147,7 +150,6 @@ export const activateUser = CatchAsyncError(
   }
 );
 
-
 //login user
 interface ILoginRequest {
   email: string;
@@ -257,5 +259,24 @@ export const updateAccessToken = CatchAsyncError(
   }
 );
 
+// get user
+export const getUserInfo = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = req.user?._id as string;
 
+      const userJson = await redis.get(userId);
 
+      if (userJson) {
+        const user = JSON.parse(userJson);
+
+        res.status(201).json({
+          success: true,
+          user,
+        });
+      }
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
