@@ -58,7 +58,7 @@ workflows:
   build_and_test:
     jobs:
       - build  # First, run the build job
-      - linter_test:  # Second, run the linter job
+      - linter:  # Second, run the linter job
           requires:
             - build  # Ensure the build job completes first
       - jest_test:  # Third, run the Jest tests
