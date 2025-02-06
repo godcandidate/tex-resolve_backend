@@ -3,6 +3,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import 'dotenv/config';
 import userRouter from "./routes/user.route";
+import ticketRouter from './routes/ticket.route';
 
 
 
@@ -23,6 +24,7 @@ app.use(cors({
 app.use(
   "/api/v1",
   userRouter,
+  ticketRouter
 );
 
 //testing api
