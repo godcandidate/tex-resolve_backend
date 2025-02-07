@@ -117,3 +117,21 @@ export const getAllTickets = CatchAsyncError(
     }
   }
 );
+
+
+//Get all details of a ticket
+export const getTicket = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+  try {
+
+     //Get a todo from database
+    const ticket_id = req.params.id;
+    const ticket = await ticketModel.findById(ticket_id);
+   
+
+    res.status(200).json(ticket);
+
+  } catch (error: any) {
+    return next(new ErrorHandler(error.message, 400));
+  }
+});
