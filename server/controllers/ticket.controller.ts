@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import ticketModel, { ITicket } from "../models/ticket.model";
+import { redis } from "../utils/redis";
 import ErrorHandler from "../utils/ErrorHandler";
 import { CatchAsyncError } from "../middlewares/catchAsyncError";
 import { uploadAttachments } from "./asset.controller";
@@ -68,6 +69,37 @@ export const createTicket = CatchAsyncError(
       });
     } catch (error: any) {
       console.log(error);
+      return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
+
+
+//Get all tickets
+export const getAllTickets = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      //check if tickets is in redis cache
+      //const isCacheExist = await redis.get("allTickets");
+      const isCacheExist = false;
+
+      if (isCacheExist) {
+        const tickets = JSON.parse(isCacheExist);
+        res.status(200).json({
+          tickets
+        });
+      } else {
+        // exclude attachments attributes
+        const tickets = await ticketModel.find().select(
+          "-attachments"
+        );
+        //await redis.set("allTickets", JSON.stringify(tickets));
+
+        res.status(200).json({
+          tickets
+        });
+      }
+    } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }
   }
