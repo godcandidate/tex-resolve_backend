@@ -51,8 +51,13 @@ export const uploadAttachments = async (req: Request): Promise<UploadResult> => 
         return { success: false, error: "Invalid file format" };
       }
 
+      // Generate a unique file name and specify the folder path
       const fileName = `${Date.now()}-${file.originalname}`;
-      const fileUpload = bucket.file(fileName);
+      const folderName = "attachments"; // Designated folder
+      const filePath = `${folderName}/${fileName}`; 
+
+      // Create a reference to the file in the specified folder
+      const fileUpload = bucket.file(filePath);
 
       // Upload the file to Firebase Storage
       const blobStream = fileUpload.createWriteStream({
@@ -69,16 +74,16 @@ export const uploadAttachments = async (req: Request): Promise<UploadResult> => 
         blobStream.on("finish", resolve).on("error", reject);
       });
 
-      // Get the public URL of the uploaded file
-      const [url] = await fileUpload.getSignedUrl({
-        action: "read",
-        expires: "03-09-2491", // Expiry date far in the future
-      });
+      // Make the file publicly accessible
+      await fileUpload.makePublic(); // This makes the file publicly readable
+
+      // Construct the public URL
+      const publicUrl = `https://storage.googleapis.com/${bucket.name}/${filePath}`;
 
       // Store the file data
       uploadedFilesData.push({
         public_id: fileName,
-        url,
+        url: publicUrl,
       });
     }
 
