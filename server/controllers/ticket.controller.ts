@@ -19,14 +19,27 @@ interface ICreateTicketBody {
   attempted_solution: string;
   attachments?: Array<{ public_id: string; url: string }>;
   tags?: string[]; // Array of strings
-  issuedBy: string;
+  issuedBy: {
+    id: string;
+    name: string;
+    role?: string;
+    profile?: string;
+  };
 }
 
 //Create ticket
 export const createTicket = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Check if attachments are added
+
+      // get user details
+      const issuedBy = {
+        id: req.user?._id as string,
+        name: req.user?.name as string,
+
+      };
+
+      //Check if attachments are added
       let attachments: Array<{ public_id: string; url: string }> | undefined;
       const files = req.files || (req.file ? [req.file] : []);
       if (files.length !== 0) {
@@ -51,7 +64,7 @@ export const createTicket = CatchAsyncError(
         description: req.body.description,
         attempted_solution: req.body.attempted_solution,
         tags: req.body.tags || [],
-        issuedBy: req.body.issuedBy,
+        issuedBy,
       };
 
       // Add attachments to the ticket data if they exist
