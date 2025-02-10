@@ -118,9 +118,7 @@ export const deleteAttachments = async (filePaths: string[]): Promise<boolean> =
 
         // Delete the file
         await file.delete();
-        console.log(`File deleted successfully: ${filePath}`);
       } catch (error) {
-        console.error(`Error deleting file: ${filePath}`, error);
         throw error; // Rethrow the error for centralized handling
       }
     });
