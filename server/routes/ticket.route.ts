@@ -1,5 +1,5 @@
 import express from "express";
-import { createTicket, getAllTickets, getTicket } from "../controllers/ticket.controller";
+import { createTicket, getAllTickets, getTicket, getUserTickets } from "../controllers/ticket.controller";
 import { isAuthenticated } from "../utils/auth";
 import multer from "multer";
 
@@ -17,6 +17,7 @@ const upload = multer({
 ticketRouter.post("/tickets", isAuthenticated,  upload.array("attachments", 10), createTicket);
 ticketRouter.get("/tickets", getAllTickets);
 ticketRouter.get("/tickets/:id", getTicket);
+ticketRouter.get("/user/tickets", isAuthenticated, getUserTickets);
 
 
 
