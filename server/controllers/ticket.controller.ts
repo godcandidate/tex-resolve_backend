@@ -124,7 +124,7 @@ export const getTicket = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
   try {
 
-     //Get a todo from database
+     //Get ticket from database
     const ticket_id = req.params.id;
     const ticket = await ticketModel.findById(ticket_id);
    
@@ -135,3 +135,26 @@ export const getTicket = CatchAsyncError(
     return next(new ErrorHandler(error.message, 400));
   }
 });
+
+//get all tickets by a user
+export const getUserTickets = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+
+      //Get user id 
+      const issuedById =  req.user?._id as string;
+
+      // Query tickets where issuedBy.id matches the provided ID
+      const tickets = await ticketModel.find({
+        "issuedBy.id": issuedById,
+      }).select("-attachments"); 
+
+      // Respond with the filtered tickets
+      return res.status(200).json({
+        tickets
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
