@@ -3,7 +3,7 @@ import ticketModel, { ITicket } from "../models/ticket.model";
 import { redis } from "../utils/redis";
 import ErrorHandler from "../utils/ErrorHandler";
 import { CatchAsyncError } from "../middlewares/catchAsyncError";
-import { uploadAttachments } from "./asset.controller";
+import { deleteAttachments, uploadAttachments } from "./asset.controller";
 
 //using interface for req.user
 declare module "express" {
@@ -238,6 +238,46 @@ export const updateTicket = CatchAsyncError(
       res.status(200).json({ message: "ticket details updated successfully"});
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
+
+// Delete ticket and its attachments
+export const deleteTicket = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const ticketId = req.params.id;
+
+      // Fetch the ticket from the database
+      const ticket = await ticketModel.findById(ticketId).select("attachments");
+
+      if (!ticket) {
+        return next(new ErrorHandler("Ticket not found", 404));
+      }
+
+      // Extract file paths from the attachments
+      const filePaths = ticket.attachments?.map((attachment) =>
+        `attachments/${attachment.public_id}`
+      );
+
+      // Delete the attachments from Firebase Storage if they exist
+      if (filePaths && filePaths.length > 0) {
+        const deletionResult = await deleteAttachments(filePaths);
+
+        if (!deletionResult) {
+          console.warn("Some attachments could not be deleted.");
+        }
+      }
+
+      // Delete the ticket from the database
+      await ticketModel.findByIdAndDelete(ticketId);
+
+      return res.status(200).json({
+        message: "Ticket and its attachments deleted successfully",
+      });
+    } catch (error: any) {
+      console.error(error);
+      return next(new ErrorHandler(error.message, 500));
     }
   }
 );
