@@ -87,30 +87,71 @@ export const createTicket = CatchAsyncError(
 );
 
 
-//Get all tickets
+// Get all tickets with pagination and search
 export const getAllTickets = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      //check if tickets is in redis cache
-      //const isCacheExist = await redis.get("allTickets");
-      const isCacheExist = false;
 
+      // Extract query parameters for pagination and search
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10; 
+      const searchQuery = req.query.search?.toString().trim() || ""; 
+      const tags = Array.isArray(req.query.tags)
+        ? (req.query.tags as string[])
+        : [req.query.tags?.toString() || ""]; 
+
+      // Check if tickets are in Redis cache
+      //const cacheKey = `tickets_page_${page}_limit_${limit}_search_${searchQuery}_tags_${tags.join(",")}`;
+      const isCacheExist = false; 
       if (isCacheExist) {
-        const tickets = JSON.parse(isCacheExist);
-        res.status(200).json({
-          tickets
+        const cachedTickets = JSON.parse(isCacheExist);
+        return res.status(200).json({
+          success: true,
+          tickets: cachedTickets.tickets,
+          totalPages: cachedTickets.totalPages,
+          currentPage: cachedTickets.currentPage,
         });
-      } else {
-        // exclude attachments attributes
-        const tickets = await ticketModel.find().select(
-          "-attachments"
-        );
-        //await redis.set("allTickets", JSON.stringify(tickets));
-
-        res.status(200).json(tickets);
       }
+
+      // Build the query based on search and tags
+      const query: any = {};
+      if (searchQuery) {
+        query.$or = [
+          { title: { $regex: searchQuery, $options: "i" } }, // Case-insensitive search by title
+          { tags: { $in: [searchQuery] } }, // Search by tag
+        ];
+      }
+      if (tags.length > 0 && tags[0] !== "") {
+        query.tags = { $all: tags }; // Match all provided tags
+      }
+
+      // Calculate pagination parameters
+      const skip = (page - 1) * limit;
+
+      // Fetch total count of tickets matching the query
+      const totalTickets = await ticketModel.countDocuments(query);
+
+      // Fetch paginated tickets, excluding attachments
+      const tickets = await ticketModel
+        .find(query)
+        .select("-attachments")
+        .skip(skip)
+        .limit(limit);
+
+      // Prepare response data
+      const response = {
+        tickets,
+        totalPages: Math.ceil(totalTickets / limit),
+        currentPage: page,
+      };
+
+      // Optionally, cache the result in Redis
+      // await redis.set(cacheKey, JSON.stringify(response), "EX", 60 * 5); // Cache for 5 minutes
+
+      // Respond with the paginated tickets
+      return res.status(200).json(response);
     } catch (error: any) {
-      return next(new ErrorHandler(error.message, 400));
+      return next(new ErrorHandler(error.message, 500));
     }
   }
 );
