@@ -77,7 +77,6 @@ export const createTicket = CatchAsyncError(
 
       // Respond with the created ticket
       return res.status(201).json({
-        success: true,
         message: "Ticket created successfully",
       });
     } catch (error: any) {
@@ -108,9 +107,7 @@ export const getAllTickets = CatchAsyncError(
         );
         //await redis.set("allTickets", JSON.stringify(tickets));
 
-        res.status(200).json({
-          tickets
-        });
+        res.status(200).json(tickets);
       }
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
@@ -155,6 +152,51 @@ export const getUserTickets = CatchAsyncError(
       });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+
+//Create ticket interface
+interface IUpdateTicketBody {
+  title?: string;
+  description?: string;
+  attempted_solution?: string;
+  attachments?: Array<{ public_id: string; url: string }>;
+  tags?: string[]; // Array of strings
+  issuedBy: {
+    id?: string;
+    name?: string;
+    role?: string;
+    profile?: string;
+  };
+}
+// update a ticket details given the id
+export const updateTicket = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+
+      //Get updated ticket body
+      const ticketData:IUpdateTicketBody = req.body;
+      const userId = ticketData.issuedBy.id;
+
+      //Check if user owns this ticket
+      const issuedById =  req.user?._id as string;
+      if (userId !== issuedById){
+        res.status(400).json({
+          message: "user not authorized"});
+      }
+      
+      const ticketId = req.params.id;
+
+      await ticketModel.findByIdAndUpdate(
+        ticketId,
+        { $set: ticketData },
+        { new: true }
+      );
+
+      res.status(200).json({ message: "ticket details updated successfully"});
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
     }
   }
 );
