@@ -9,9 +9,6 @@ const ticketRouter = express.Router();
 // Configure multer to store files in memory
 const upload = multer({
     storage: multer.memoryStorage(), // Store files in memory
-    limits: {
-      fileSize: 10 * 1024 * 1024, // Limit file size to 10 MB
-    },
   });
 
 ticketRouter.post("/tickets", isAuthenticated,  upload.array("attachments", 10), createTicket);
