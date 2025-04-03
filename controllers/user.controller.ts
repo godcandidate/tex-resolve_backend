@@ -270,7 +270,7 @@ export const getUserInfo = CatchAsyncError(
       if (userJson) {
         const user = JSON.parse(userJson);
 
-        res.status(201).json({
+        res.status(200).json({
           success: true,
           user,
         });
