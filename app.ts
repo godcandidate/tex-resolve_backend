@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import "dotenv/config";
 import userRouter from "./routes/user.route";
 import ticketRouter from "./routes/ticket.route";
+import meetingRouter from "./routes/meeting.route";
 
 const app = express();
 
@@ -21,7 +22,7 @@ app.use(
 );
 
 // routes
-app.use("/api/v1", userRouter, ticketRouter);
+app.use("/api/v1", userRouter, ticketRouter, meetingRouter);
 
 //testing api
 app.use("/test", (req: Request, res: Response) => {
