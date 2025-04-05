@@ -7,7 +7,7 @@ import { CatchAsyncError } from "../middlewares/catchAsyncError";
 // Define the interface for the request body
 interface IMeetingRequestBody {
   title: string;
-  ticket: string;
+  ticketId: string;
   date: string;
   time: string;
 }
@@ -17,7 +17,7 @@ export const createMeeting = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { title, ticket, date, time } = req.body as IMeetingRequestBody;
+    const { title, ticketId, date, time } = req.body as IMeetingRequestBody;
 
     // Authenticate the user and get their email
     if (!req.user) {
@@ -27,7 +27,7 @@ export const createMeeting = async (
     const hostEmail = user.email;
 
     // Validate input
-    if (!title || !ticket || !date || !time) {
+    if (!title || !ticketId || !date || !time) {
       throw new ErrorHandler("All fields are required", 400);
     }
 
@@ -67,7 +67,7 @@ export const createMeeting = async (
     await meetingModel.create({
       title,
       host_email: hostEmail,
-      ticket,
+      ticket: ticketId,
       date,
       time,
       resolver : "",
