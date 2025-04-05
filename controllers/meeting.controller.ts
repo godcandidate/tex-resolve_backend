@@ -157,3 +157,24 @@ export const updateMeetingResolver = CatchAsyncError(
   }
 );
 
+
+//get meeting details for a ticket
+export const getTicketMeeting = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+
+      //Get ticket id
+      const ticketId = req.params.id;
+
+      // Query all meetings where host email is user_email
+      const meeting = await meetingModel.find({"ticket": ticketId});
+
+      // Respond with the filtered tickets
+      return res.status(200).json({
+        meeting
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
