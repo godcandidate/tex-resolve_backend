@@ -31,6 +31,20 @@ export const createMeeting = async (
       throw new ErrorHandler("All fields are required", 400);
     }
 
+    //Check user meetings limit
+    const accountType = user.account_type;
+
+    if (accountType === "freeUser") {
+      const totalMeetings = await meetingModel.countDocuments({ host_email: hostEmail });
+
+      if (totalMeetings >= 2) {
+        throw new ErrorHandler(
+          "Free users can only create up to 2 meetings. Upgrade your account to create more.",
+          403
+        );
+      }
+    }
+
     // Combine date and time into ISO format for Zoom API
     const startTime = new Date(`${date}T${time}:00`);
 
@@ -109,3 +123,5 @@ export const getAllMeetings = CatchAsyncError(
     }
   }
 );
+
+
