@@ -95,7 +95,6 @@ export const uploadAttachments = async (req: Request): Promise<UploadResult> => 
   }
 };
 
-
 // Delete file(s) from Firebase Storage
 export const deleteAttachments = async (filePaths: string[]): Promise<boolean> => {
   try {
@@ -130,5 +129,24 @@ export const deleteAttachments = async (filePaths: string[]): Promise<boolean> =
   } catch (error) {
     console.error("Failed to delete one or more files:", error);
     return false; // Return false if any error occurs
+  }
+};
+
+// Delete file(s)
+export const deleteAttachmentes = async (filePaths: string[]): Promise<{ success: boolean; error?: string }> => {
+  try {
+    if (!filePaths || filePaths.length === 0) {
+      return { success: false, error: "No file paths provided" };
+    }
+
+    for (const filePath of filePaths) {
+      const file = bucket.file(filePath);
+      await file.delete();
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return { success: false, error: "Deleting file(s) failed on Firebase" };
   }
 };
