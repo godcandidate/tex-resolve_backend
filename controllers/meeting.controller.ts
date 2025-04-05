@@ -1,7 +1,8 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import meetingModel from "../models/meeting.model";
 import { createZoomMeeting } from "../utils/zoom";
 import ErrorHandler from "../utils/ErrorHandler";
+import { CatchAsyncError } from "../middlewares/catchAsyncError";
 
 // Define the interface for the request body
 interface IMeetingRequestBody {
@@ -66,3 +67,45 @@ export const createMeeting = async (
     res.status(error.statusCode || 500).json({ message: error.message });
   }
 };
+
+
+//Get user meetings
+export const getUserMeetings = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+
+      //Get user email
+      const user_email =  req.user?.email as string;
+
+      // Query all meetings where host email is user_email
+      const meetings = await meetingModel.find({"host_email": user_email,
+      });
+
+      // Respond with the filtered tickets
+      return res.status(200).json({
+        meetings
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+
+
+//Get all meetings
+export const getAllMeetings = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+
+      // Query all meetings 
+      const meetings = await meetingModel.find();
+
+      // Respond with the filtered tickets
+      return res.status(200).json({
+        meetings
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
