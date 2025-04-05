@@ -22,7 +22,7 @@ const emailRegexPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const userSchema = new mongoose_1.default.Schema({
     name: {
         type: String,
-        required: [true, "Enter username"]
+        required: [true, "Enter username"],
     },
     email: {
         type: String,
@@ -32,11 +32,11 @@ const userSchema = new mongoose_1.default.Schema({
                 return emailRegexPattern.test(value);
             },
             message: "please enter a valid email",
-        }
+        },
     },
     password: {
         type: String,
-        required: [true, "Enter username"]
+        required: [true, "Enter username"],
     },
     avatar: {
         public_id: String,
@@ -49,6 +49,11 @@ const userSchema = new mongoose_1.default.Schema({
     isVerified: {
         type: Boolean,
         default: false,
+    },
+    account_type: {
+        type: String,
+        enum: ["freeUser", "proUser"],
+        default: "freeUser",
     },
 }, { timestamps: true });
 // sign access token

@@ -15,7 +15,7 @@ const upload = (0, multer_1.default)({
 ticketRouter.post("/tickets", auth_1.isAuthenticated, upload.array("attachments", 10), ticket_controller_1.createTicket);
 ticketRouter.get("/tickets", ticket_controller_1.getAllTickets);
 ticketRouter.get("/tickets/:id", ticket_controller_1.getTicket);
-ticketRouter.get("/user/tickets", auth_1.isAuthenticated, ticket_controller_1.getUserTickets);
+ticketRouter.get("/tickets/me", auth_1.isAuthenticated, ticket_controller_1.getUserTickets);
 ticketRouter.put("/tickets/:id", auth_1.isAuthenticated, ticket_controller_1.updateTicket);
 ticketRouter.delete("/tickets/:id", auth_1.isAuthenticated, ticket_controller_1.deleteTicket);
 exports.default = ticketRouter;

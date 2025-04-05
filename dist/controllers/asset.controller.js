@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteAttachments = exports.uploadAttachments = void 0;
+exports.deleteAttachmentes = exports.deleteAttachments = exports.uploadAttachments = void 0;
 const firebaseConfig_1 = require("../firebaseConfig"); // Import Firebase bucket
 // Upload file(s)
 const uploadAttachments = (req) => __awaiter(void 0, void 0, void 0, function* () {
@@ -103,3 +103,21 @@ const deleteAttachments = (filePaths) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.deleteAttachments = deleteAttachments;
+// Delete file(s)
+const deleteAttachmentes = (filePaths) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        if (!filePaths || filePaths.length === 0) {
+            return { success: false, error: "No file paths provided" };
+        }
+        for (const filePath of filePaths) {
+            const file = firebaseConfig_1.bucket.file(filePath);
+            yield file.delete();
+        }
+        return { success: true };
+    }
+    catch (error) {
+        console.error(error);
+        return { success: false, error: "Deleting file(s) failed on Firebase" };
+    }
+});
+exports.deleteAttachmentes = deleteAttachmentes;

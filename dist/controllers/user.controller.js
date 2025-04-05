@@ -183,7 +183,7 @@ exports.getUserInfo = (0, catchAsyncError_1.CatchAsyncError)((req, res, next) =>
         const userJson = yield redis_1.redis.get(userId);
         if (userJson) {
             const user = JSON.parse(userJson);
-            res.status(201).json({
+            res.status(200).json({
                 success: true,
                 user,
             });
