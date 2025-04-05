@@ -70,6 +70,7 @@ export const createMeeting = async (
       ticket,
       date,
       time,
+      resolver : "",
       meeting_link: zoomMeetingUrl,
     });
 
@@ -124,4 +125,35 @@ export const getAllMeetings = CatchAsyncError(
   }
 );
 
+// add/update a resolver name to meeting details
+export const updateMeetingResolver = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+
+      //Get meeting details
+      const {resolver_name} = req.body;
+      const meetingId = req.params.id;
+      
+      //Check if user owns this meeting
+      const meeting = await meetingModel.findById(meetingId);
+      const user_email =  req.user?.email as string;
+
+      if (user_email !== meeting?.host_email){
+        res.status(400).json({
+          message: "user not authorized"});
+      }
+      
+      //add or update resolve name
+      await meetingModel.findByIdAndUpdate(
+        meetingId,
+        { $set: {resolver: resolver_name} },
+        { new: true }
+      );
+
+      res.status(200).json({ message: "Resolver name updated successfully"});
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
 
