@@ -13,7 +13,7 @@ const upload = multer({
 
 ticketRouter.post("/tickets", isAuthenticated,  upload.array("attachments", 10), createTicket);
 ticketRouter.get("/tickets", getAllTickets);
-ticketRouter.get("/tickets/me", isAuthenticated, getUserTickets);
+ticketRouter.get("/user/tickets", isAuthenticated, getUserTickets);
 ticketRouter.get("/tickets/:id", getTicket);
 ticketRouter.put("/tickets/:id", isAuthenticated, updateTicket);
 ticketRouter.delete("/tickets/:id", isAuthenticated, deleteTicket);
