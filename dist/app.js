@@ -19,7 +19,7 @@ app.use(express_1.default.json({ limit: "50mb" }));
 app.use((0, cookie_parser_1.default)());
 //cors
 app.use((0, cors_1.default)({
-    origin: process.env.ORIGIN,
+    origin: '*',
 }));
 // routes
 app.use("/api/v1", user_route_1.default, ticket_route_1.default, meeting_route_1.default);
