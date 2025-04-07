@@ -28,6 +28,11 @@ const ErrorMiddleware = (err, req, res) => {
         const message = `Json web token is expired, try again`;
         err = new ErrorHandler_1.default(message, 400);
     }
+    if (err.code === 403) {
+        res.status(400).json({
+            message: "Invalid credentials",
+        });
+    }
     res.status(err.statusCode).json({
         success: false,
         message: err.message,
