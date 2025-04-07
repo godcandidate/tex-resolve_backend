@@ -20,6 +20,8 @@ app.use((0, cookie_parser_1.default)());
 //cors
 app.use((0, cors_1.default)({
     origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
 // routes
 app.use("/api/v1", user_route_1.default, ticket_route_1.default, meeting_route_1.default);
