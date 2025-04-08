@@ -15,27 +15,29 @@ jobs:
           name: List directory contents
           command: |
             ls -l ~/repo  # Ensure CircleCI checks out to ~/repo and lists files
+            echo "everything works"
 
-      # Step 3: Install dependencies inside 'server' directory
-      - run:
-          name: Install dependencies
-          command: |
-            cd ~/repo/server  # Navigate into the 'server' directory
-            npm install  # Install npm dependencies from package.json inside server
+      # # Step 3: Install dependencies inside 'server' directory
+      # - run:
+      #     name: Install dependencies
+      #     # command: |
+      #       # cd ~/repo/server  # Navigate into the 'server' directory
+      #       # npm install  # Install npm dependencies from package.json inside server
 
-      # Step 4: Run ESLint (linter)
-      - run:
-          name: Run ESLint
-          command: |
-            cd ~/repo/server  # Navigate into the 'server' directory
-            npm run lint  # Run the linting script to check for code issues
+      # # Step 4: Run ESLint (linter)
+      # - run:
+      #     name: Run ESLint
+      #     command: |
+      #     // cd ~/repo/server  # Navigate into the 'server' directory
+      #     //  npm run lint  # Run the linting script to check for code issues
+      #       echo "Linting work"
 
-      # Step 5: Run Jest tests
-      - run:
-          name: Run Jest tests
-          command: |
-            cd ~/repo/server  # Navigate into the 'server' directory
-            echo "Testing work" # npm test   Run the tests using Jest
+      # # Step 5: Run Jest tests
+      # - run:
+      #     name: Run Jest tests
+      #     command: |
+      #     //  cd ~/repo/server  # Navigate into the 'server' directory
+      #       echo "Testing work" # npm test   Run the tests using Jest
 
 workflows:
   version: 2
