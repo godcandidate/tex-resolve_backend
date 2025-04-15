@@ -21,12 +21,23 @@ require("dotenv/config");
 //Authenticate user
 exports.isAuthenticated = (0, catchAsyncError_1.CatchAsyncError)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const access_token = req.cookies.access_token;
-        if (!access_token) {
-            return next(new ErrorHandler_1.default("Please login to access this resource", 400));
+        // const access_token = req.cookies.access_token;
+        // if(!access_token){
+        //     return next(new ErrorHandler("Please login to access this resource", 400));
+        // }
+        // Access the authorization header to validate the request
+        const authHeader = req.headers.authorization;
+        // made changes to fit swagger api docs
+        if (!authHeader /*|| !authHeader.startsWith("Bearer ")*/) {
+            return res.status(401).json({ error: "Authentication Failed" });
         }
+        // Extract the token from the authorization header
+        //const token = authHeader.split(" ")[1];
+        console.log("authHeader", authHeader);
+        const token = authHeader.split(" ")[1];
+        //const token = authHeader;
         //Verify token
-        const decoded = jsonwebtoken_1.default.verify(access_token, process.env.ACCESS_TOKEN);
+        const decoded = jsonwebtoken_1.default.verify(token, process.env.ACCESS_TOKEN);
         if (!decoded) {
             return next(new ErrorHandler_1.default("Access token not valid", 400));
         }
