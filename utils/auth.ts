@@ -36,7 +36,9 @@ export const isAuthenticated = CatchAsyncError(
         
           // Extract the token from the authorization header
           //const token = authHeader.split(" ")[1];
-          const token = authHeader;
+          console.log("authHeader", authHeader);
+          const token = authHeader.split(" ")[1];
+          //const token = authHeader;
  
           //Verify token
           const decoded = jwt.verify(token, process.env.ACCESS_TOKEN as string) as JwtPayload;
