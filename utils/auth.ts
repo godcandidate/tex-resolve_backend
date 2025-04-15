@@ -19,14 +19,27 @@ declare module 'express' {
 export const isAuthenticated = CatchAsyncError(
     async (req: Request, res: Response, next: NextFunction) => {
       try {
-          const access_token = req.cookies.access_token;
+          // const access_token = req.cookies.access_token;
 
-          if(!access_token){
-              return next(new ErrorHandler("Please login to access this resource", 400));
+          // if(!access_token){
+          //     return next(new ErrorHandler("Please login to access this resource", 400));
+          // }
+
+          // Access the authorization header to validate the request
+          const authHeader = req.headers.authorization;
+        
+          // made changes to fit swagger api docs
+          if (!authHeader /*|| !authHeader.startsWith("Bearer ")*/) {
+            return res.status(401).json({ error: "Authentication Failed" });
           }
+
+        
+          // Extract the token from the authorization header
+          //const token = authHeader.split(" ")[1];
+          const token = authHeader;
  
           //Verify token
-          const decoded = jwt.verify(access_token, process.env.ACCESS_TOKEN as string) as JwtPayload;
+          const decoded = jwt.verify(token, process.env.ACCESS_TOKEN as string) as JwtPayload;
           if(!decoded){
             return next(new ErrorHandler("Access token not valid", 400));
           }
