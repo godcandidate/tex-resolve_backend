@@ -30,7 +30,7 @@ export const ErrorMiddleware = (err:any, req:Request, res:Response) => {
     }
 
     if (err.code === 403){
-        res.status(400).json({
+        res.status(403).json({
             message: "Invalid credentials",
           });
     }
