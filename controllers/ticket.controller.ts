@@ -15,6 +15,7 @@ declare module "express" {
 //Create ticket interface
 interface ICreateTicketBody {
   title: string;
+  category: string;
   description: string;
   attempted_solution: string;
   attachments?: Array<{ public_id: string; url: string }>;
@@ -61,6 +62,7 @@ export const createTicket = CatchAsyncError(
       // Extract ticket data from the request body
       const ticketData: ICreateTicketBody = {
         title: req.body.title,
+        category: req.body.category,
         description: req.body.description,
         attempted_solution: req.body.attempted_solution,
         tags: req.body.tags || [],
@@ -119,6 +121,7 @@ export const getAllTickets = CatchAsyncError(
         query.$or = [
           { title: { $regex: searchQuery, $options: "i" } }, // Case-insensitive search by title
           { tags: { $in: [searchQuery] } }, // Search by tag
+          { category: { $regex: searchQuery, $options: "i" } }, // Case-insensitive search by category
         ];
       }
       if (tags.length > 0 && tags[0] !== "") {

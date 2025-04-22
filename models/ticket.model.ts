@@ -4,6 +4,7 @@ import "dotenv/config";
 // Ticket Interface
 export interface ITicket extends Document {
   title: string;
+  category: string;
   description: string;
   attempted_solution: string;
   verified_solution: string;
@@ -27,6 +28,10 @@ const ticketSchema: Schema<ITicket> = new mongoose.Schema(
       type: String,
       required: true, // Title is mandatory
       trim: true, // Remove extra whitespace
+    },
+    category: {
+      type: String,
+      required: true, // Category is mandatory
     },
     description: {
       type: String,
@@ -82,7 +87,7 @@ const ticketSchema: Schema<ITicket> = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["opened", "assigned", "resolved", "closed"], // Restrict to valid statuses
+      enum: ["open", "assigned", "resolved"], // Restrict to valid statuses
       default: "opened",
     },
     meeting: {

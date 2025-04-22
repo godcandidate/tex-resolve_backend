@@ -12,6 +12,10 @@ const ticketSchema = new mongoose_1.default.Schema({
         required: true, // Title is mandatory
         trim: true, // Remove extra whitespace
     },
+    category: {
+        type: String,
+        required: true, // Category is mandatory
+    },
     description: {
         type: String,
         required: true, // Description is mandatory
@@ -66,7 +70,7 @@ const ticketSchema = new mongoose_1.default.Schema({
     },
     status: {
         type: String,
-        enum: ["opened", "assigned", "resolved", "closed"], // Restrict to valid statuses
+        enum: ["open", "assigned", "resolved"], // Restrict to valid statuses
         default: "opened",
     },
     meeting: {

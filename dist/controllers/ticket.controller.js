@@ -40,6 +40,7 @@ exports.createTicket = (0, catchAsyncError_1.CatchAsyncError)((req, res, next) =
         // Extract ticket data from the request body
         const ticketData = {
             title: req.body.title,
+            category: req.body.category,
             description: req.body.description,
             attempted_solution: req.body.attempted_solution,
             tags: req.body.tags || [],
@@ -90,6 +91,7 @@ exports.getAllTickets = (0, catchAsyncError_1.CatchAsyncError)((req, res, next) 
             query.$or = [
                 { title: { $regex: searchQuery, $options: "i" } }, // Case-insensitive search by title
                 { tags: { $in: [searchQuery] } }, // Search by tag
+                { category: { $regex: searchQuery, $options: "i" } }, // Case-insensitive search by category
             ];
         }
         if (tags.length > 0 && tags[0] !== "") {
