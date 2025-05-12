@@ -19,10 +19,7 @@ app.use(express_1.default.json({ limit: "50mb" }));
 app.use((0, cookie_parser_1.default)());
 //cors
 app.use((0, cors_1.default)({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
+    origin: "*",
 }));
 // routes
 app.use("/api/v1", user_route_1.default, ticket_route_1.default, meeting_route_1.default);
