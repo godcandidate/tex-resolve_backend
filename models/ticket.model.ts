@@ -17,7 +17,7 @@ export interface ITicket extends Document {
     profile?: string;
   };
   assignedTo: string;
-  status: "opened" | "in_progress" | "resolved" | "closed"; // Enum for status
+  status: "opened" | "assigned" | "resolved" ; // Enum for status
   meeting: { id: string; link: string }; // Meeting details
 }
 
@@ -87,7 +87,7 @@ const ticketSchema: Schema<ITicket> = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["open", "assigned", "resolved"], // Restrict to valid statuses
+      enum: ["opened", "assigned", "resolved"], // Restrict to valid statuses
       default: "opened",
     },
     meeting: {
