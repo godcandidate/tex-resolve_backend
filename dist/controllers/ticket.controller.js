@@ -106,7 +106,8 @@ exports.getAllTickets = (0, catchAsyncError_1.CatchAsyncError)((req, res, next) 
             .find(query)
             .select("-attachments")
             .skip(skip)
-            .limit(limit);
+            .limit(limit)
+            .sort({ createdAt: -1 }); // Sort by creation date in descending order
         // Prepare response data
         const response = {
             tickets,

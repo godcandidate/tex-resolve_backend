@@ -139,7 +139,8 @@ export const getAllTickets = CatchAsyncError(
         .find(query)
         .select("-attachments")
         .skip(skip)
-        .limit(limit);
+        .limit(limit)
+        .sort({ createdAt: -1 }); // Sort by creation date in descending order
 
       // Prepare response data
       const response = {
