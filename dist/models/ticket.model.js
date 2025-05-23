@@ -70,7 +70,7 @@ const ticketSchema = new mongoose_1.default.Schema({
     },
     status: {
         type: String,
-        enum: ["open", "assigned", "resolved"], // Restrict to valid statuses
+        enum: ["opened", "assigned", "resolved"], // Restrict to valid statuses
         default: "opened",
     },
     meeting: {
