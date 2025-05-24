@@ -75,12 +75,14 @@ export const createTicket = CatchAsyncError(
       }
 
       // Store the ticket
-      await ticketModel.create(ticketData);
+      const newTicket = await ticketModel.create(ticketData);
 
       // Respond with the created ticket
       return res.status(201).json({
         message: "Ticket created successfully",
+        ticketId: newTicket._id, 
       });
+      
     } catch (error: any) {
       console.log(error);
       return next(new ErrorHandler(error.message, 400));

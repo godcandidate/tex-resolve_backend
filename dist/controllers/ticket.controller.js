@@ -51,10 +51,11 @@ exports.createTicket = (0, catchAsyncError_1.CatchAsyncError)((req, res, next) =
             ticketData.attachments = attachments;
         }
         // Store the ticket
-        yield ticket_model_1.default.create(ticketData);
+        const newTicket = yield ticket_model_1.default.create(ticketData);
         // Respond with the created ticket
         return res.status(201).json({
             message: "Ticket created successfully",
+            ticketId: newTicket._id,
         });
     }
     catch (error) {
